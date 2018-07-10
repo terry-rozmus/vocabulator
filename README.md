@@ -1,1 +1,1 @@
-This is a Django project I wrote while I was teaching English in Japan. The objective what to discover what English sentences the students in the classroom would understand based on which textbooks they had used in the past.
+This is a Django project I wrote while I was teaching English in Japan. The objective was to discover what English sentences the students in the classroom would understand based on which textbooks they had used in the past. It seemed to work effectively when I was planning my instructions to give to the students.
