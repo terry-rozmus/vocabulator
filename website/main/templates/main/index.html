@@ -1,0 +1,104 @@
+{% load staticfiles %}
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="{% static "jstree/themes/vocabulator/style.css" %}"></link>
+        <link rel="stylesheet" type="text/css" href="{% static "stylesheets/main.css" %}"></link>
+        <script language="javascript" type="text/javascript" src="{% static "javascript/jquery-1.11.3.js" %}"></script>
+        <script language="javascript" type="text/javascript" src="{% static "jstree/jstree.js" %}"></script>
+    </head>
+    <body>
+        <form action="../" method="post" name="query-form" id="query-form">
+            {% csrf_token %}
+            <div class="page" id="page">
+                <div id="books_tree">
+                    <ul>{% for school, grades in tree %}
+                        <li class="folder" data-jstree='{"icon":"{% static "images/school.png" %}"}'>
+                            {{ school }}
+                            <ul>{% for grade, books in grades %}
+                                <li class="folder" data-jstree='{"icon":"{% static "images/grade.png" %}"}'>
+                                    {{ grade }}
+                                    <ul>
+                                        {% for book, sections in books %}
+                                            <li class="folder" data-jstree='{"icon":"{% static "images/book.png" %}"}'>
+                                                <div class="book">{{ book }}</div>
+                                                <ul>
+                                                    {% for section in sections %}
+                                                        {% if not section.parent_id %}
+                                                            <li class="folder" data-jstree='{"icon":"{% static "images/book.png" %}"}'>
+                                                                <div class="bkmk">{{ section.0 }}</div>
+                                                                <ul>
+                                                                    {% for bookmark in section.1 %}
+                                                                        <li id="bkmk_{{ bookmark.id }}"><a href="#" {% if bookmark.id in form_data.checked %} class="jstree-clicked"{% endif %}><input type="checkbox" name="bkmk_{{ bookmark.id }}"{% if bookmark.id in form_data.checked %} checked{% endif %}><div class="bkmk">{{ bookmark.section_title }}</div></a></li>
+                                                                    {% endfor %}
+                                                                </ul>
+                                                            </li>
+                                                        {% else %}
+                                                            <li id="bkmk_{{ section.id }}"><a href="#" {% if section.id in form_data.checked %} class="jstree-clicked"{% endif %}><input type="checkbox" name="bkmk_{{ section.id }}"{% if section.id in form_data.checked %} checked{% endif %}><div class="bkmk">{{ section.section_title }}</div></a></li>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </ul>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </li>
+                            {% endfor %}</ul>
+                        </li>
+                    {% endfor %}</ul>
+                </div>
+                <div class="search">
+                    <textarea rows="4" cols="50" name="sentence" id="sentence">{{ form_data.sentence }}</textarea>
+                    <button type="submit" value="OK" class="search-button" id="search-button">&nbsp;</button>
+                </div>
+                <div class="results" id="results">
+                    {% if words %}
+                    <div class="key">
+                        <font class="word-title">COLORS:</font>
+                        {% for category in categories %}
+                            <font{% if category.warning != 0 %} style="color:#{{ category.warning }}"{% endif %}>{{ category.name }}</font>
+                        {% endfor %}
+                    </div>
+                    <div class="results-words" id="results-words">
+                        <p class="word-title">WORD:</p>
+                        {% for word in words %}
+                            <p{% if word.warning != 0 %} style="color:#{{ word.warning }}"{% endif %}>{{ word.word }} &nbsp;</p>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    <div class="results-frequency" id="results-frequency">
+                        {% if words %}
+                        <p class="number-title">FREQUENCY:</br>
+                        COUNT:</p>
+                        {% for word in words %}
+                            <p><i>{{ word.frequency }}%</i>{{ word.word }} &nbsp;</br>
+                            <i>({{ word.count }})</i> &nbsp;</p>
+                        {% endfor %}
+                        <div class="results-end-margin" id="results-end-margin">
+                            &nbsp;
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <p><h4>Instructions</h4></p>
+                        <p>
+                            This system is designed to estimate the English level of Japanese high school students
+                            based on the textbooks they have used in previous years and lessons.
+                            Most high school students will have used all of the junior high school textbooks.
+                            Which high school textbooks they have used will depend on their school and level.
+                            To use the system, select some textbooks from the panel on the left.
+                            Finer grained control can be gained by opening up the branches of the tree hierarchy.
+                        </p>
+                        <ol>
+                            <li>Choose some groups of books representing the student's previous learning
+                            using the check boxes at left.</li>
+                            <li>After choosing books, type in a short phrase in the search box.</li>
+                            <li>Press the magnifying glass button.</li>
+                            <li>After a short pause some statistics will appear showing how common
+                            the words were in the students' previous learning material.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </body>
+</html>
+<script language="javascript" type="text/javascript" src="{% static "javascript/main.js" %}"></script>

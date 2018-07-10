@@ -1,0 +1,26 @@
+{% csrf_token %}
+{{ tree_selections }}
+<div class="key">
+    <font class="word-title">COLORS:</font>
+    {% for category in categories %}
+        <font{% if category.warning != 0 %} style="color:#{{ category.warning }}"{% endif %}>{{ category.name }}</font>
+    {% endfor %}</div>
+<div class="results-words" id="results-words">
+    <p class="word-title">WORD:</p>
+    {% for word in words %}
+        <p{% if word.warning != 0 %} style="color:#{{ word.warning }}"{% endif %}>{{ word.word }} &nbsp;</p>
+    {% endfor %}
+</div>
+<div class="results-frequency" id="results-frequency">
+    <p class="number-title">FREQUENCY:</br>
+    COUNT:</p>
+    {% for word in words %}
+        <p><i>{{ word.frequency }}%</i>{{ word.word }} &nbsp;</br>
+        <i>({{ word.count }})</i> &nbsp;</p>
+    {% endfor %}
+    <div class="results-end-margin" id="results-end-margin">
+        &nbsp;
+    </div>
+</div>
+
+
